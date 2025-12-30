@@ -128,7 +128,7 @@
   --clip-size: 0
   --clip-pos: 0 0
   clip-path: circle(var(--clip-size) at var(--clip-pos))
-  transition: clip-path .75s ease-out
+  transition: clip-path .80s ease-out
 </style>
 
     

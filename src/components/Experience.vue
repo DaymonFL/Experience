@@ -13,11 +13,11 @@
                     icon="mdi-close"
                     @click="$emit('close')"
                     ></v-btn>
-
+                        <v-toolbar-title></v-toolbar-title>
                     <!-- <v-toolbar-title>Mi experiencia</v-toolbar-title> -->
+                    <ThemeChange></ThemeChange>
 
                     <v-toolbar-items>
-    
                     </v-toolbar-items>
                 </v-toolbar>
                 <v-card-title class="ma-0 pa-0">

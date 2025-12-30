@@ -6,7 +6,8 @@
         
         color="#05626C"
       >
-        <ButtonToggle></ButtonToggle>
+        <ThemeChange></ThemeChange>
+
       </v-app-bar>
         <!-- image="@/assets/fondo1.png" -->
       <v-main >
@@ -18,6 +19,5 @@
 </template>
 
 <script lang="ts" setup>
-  import ButtonToggle from '../components/themeChange.vue';
   //
 </script>

@@ -38,8 +38,6 @@
   <v-dialog v-model="dialog"  max-width="400" persistent transition="dialog-bottom-transition" >
     <v-card
       prepend-icon="mdi-information"
-      color="surface-variant"
-      image="https://img.freepik.com/free-photo/html-css-collage-concept_23-2150061955.jpg"
       text="Esta presentación fue diseñada y creada por mi usando Vue 3, Vuetify, Adobe Illustrator, Adobe After Effects, TypeScript, CSS & Node"
       title="Información de desarrollo"
       rounded="xl"
