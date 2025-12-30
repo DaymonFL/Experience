@@ -116,7 +116,7 @@
 .scroll-container {
   overflow: hidden;
   width: 100%;
-  background: white;
+  background: transparent;
   display: flex;
   position: relative;
 }
