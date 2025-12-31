@@ -51,7 +51,7 @@
                         <v-card-title 
                         class="text-white text-center text-wrap px-4 py-2 " 
                         :class="{ 'font-weight-semibold': $vuetify.display.smAndDown, 'font-weight-bold': $vuetify.display.mdAndUp }">
-                          Dai Fernando Sastre Hernández | Arquitecto de Soluciones Full Stack
+                        Dai Fernando Sastre Hernández | Arquitecto de Soluciones Full Stack
                         </v-card-title>
                 </v-container>
             </v-img>
@@ -71,9 +71,16 @@
                 variant="outlined"
                 rounded="xl"
                 color="white"
-                prepend-icon="mdi-creation"
                 @click="ExpdialogVisible = true"
-            >Explora mi experiencia
+            >
+              <Vue3Lottie
+                        :animationData="EstrellasAnimadas"
+                        :height="28" 
+                        :width="28"
+                        :loop="true"
+                        :autoplay="true"
+                        />  
+              Explora mi experiencia
             </v-btn>
 
             </v-card-actions>
@@ -101,7 +108,10 @@
 <script setup lang="ts">
     import {ref} from 'vue';
     import Me from '@/components/Me.vue';
+    import { Vue3Lottie } from 'vue3-lottie'
     import Experience from '@/components/Experience.vue';
+    import EstrellasAnimadas from '@/assets/stars.json'
+
     
     const MedialogVisible = ref(false);
     const ExpdialogVisible = ref(false);
