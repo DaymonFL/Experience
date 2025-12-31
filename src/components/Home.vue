@@ -49,8 +49,7 @@
                     </v-hover>
                     <!-- gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" -->
                         <v-card-title 
-                        class="text-white text-center text-wrap px-4 py-2 " 
-                        :class="{ 'font-weight-semibold': $vuetify.display.smAndDown, 'font-weight-bold': $vuetify.display.mdAndUp }">
+                        class="text-white text-center text-wrap px-4 py-2 ">
                         Dai Fernando Sastre Hernández | Arquitecto de Soluciones Full Stack
                         </v-card-title>
                 </v-container>
