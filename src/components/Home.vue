@@ -55,8 +55,7 @@
                 </v-container>
             </v-img>
 
-            <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-card-actions class="justify-center">
             <v-btn
                 variant="outlined"
                 rounded="xl"

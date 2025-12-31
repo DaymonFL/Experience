@@ -38,22 +38,44 @@
   <v-dialog v-model="dialog"  max-width="400" persistent transition="dialog-bottom-transition" >
     <v-card
       prepend-icon="mdi-information"
-      text="Esta presentación fue diseñada y creada por mi usando Vue 3, Vuetify, Adobe Illustrator, Adobe After Effects, TypeScript, CSS & Node"
       title="Información de desarrollo"
       rounded="xl"
     >
-      <template v-slot:actions>
-        <v-spacer></v-spacer>
+      <v-card-text>
+        Esta presentación fue diseñada y creada por mi usando Vue 3, Vuetify, Adobe Illustrator, Adobe After Effects, TypeScript, CSS & Node
+        <Vue3Lottie class="mb-0 sombra-lottie" v-if="theme.global.name.value === 'light'"
+          :animationData="FirmaNegra" 
+          :height="70" 
+          :width="70"
+          :loop="false"
+          :autoplay="true"
+        />
+        <Vue3Lottie class="mb-0 sombra-lottie" v-if="theme.global.name.value === 'dark'"
+          :animationData="FirmaBlanca" 
+          :height="70" 
+          :width="70"
+          :loop="false"
+          :autoplay="true"
+        />
+      </v-card-text>
+      <v-card-actions>
         <v-btn @click="dialog = false" rounded="xl">
           Cerrar
         </v-btn>
-      </template>
+      </v-card-actions>
     </v-card>
-    </v-dialog>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
+  import { Vue3Lottie } from 'vue3-lottie'
+  import { useTheme } from 'vuetify'
+  import FirmaNegra from '@/assets/signature_black.json'
+  import FirmaBlanca from '@/assets/signature_white.json'
+
+  const theme = useTheme()
+
   const dialog = ref(false)
 
   const items = [
@@ -92,4 +114,10 @@
 
     &:hover
       color: rgba(25, 118, 210, 1)
+</style>
+<style scoped>
+    .sombra-lottie {
+    /* Filtro CSS que aplica sombra a la silueta del SVG */
+    filter: drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.5));
+    }
 </style>
