@@ -1,4 +1,12 @@
 body {
         font-family: "Montserrat" !important;
     }
-    
+:root {
+  /* Indica al navegador que no aplique filtros de inversión automáticos */
+  color-scheme: light dark;
+}
+
+html {
+  /* Evita que Android intente 'adivinar' el modo oscuro */
+  forced-color-adjust: none;
+}
