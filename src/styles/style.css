@@ -2,11 +2,18 @@ body {
         font-family: "Montserrat" !important;
     }
 :root {
-  /* Indica al navegador que no aplique filtros de inversión automáticos */
-  color-scheme: light dark;
+  /* Obliga al navegador a respetar la paleta de colores del autor */
+  color-scheme: light dark; 
+  forced-color-adjust: none; /* Bloquea el ajuste automático de colores del sistema */
+  -webkit-tap-highlight-color: transparent;
 }
 
-html {
-  /* Evita que Android intente 'adivinar' el modo oscuro */
-  forced-color-adjust: none;
+/* Si tu app está en modo light, forzamos al sistema a no invertir nada */
+html[data-theme='light'] {
+  color-scheme: light !important;
+}
+
+/* Si está en dark, le decimos que ya somos oscuros */
+html[data-theme='dark'] {
+  color-scheme: dark !important;
 }

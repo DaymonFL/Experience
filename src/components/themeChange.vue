@@ -1,134 +1,124 @@
 <template>
-  <v-tooltip location="start" :text="theme.global.name.value == 'light' ? 'Modo claro' : 'Modo oscuro'">
-      <template v-slot:activator="{ props }">
-          <transition name="fade-transition">
-              <v-btn v-bind="props" variant="tonal" class="mx-2" @click="toggleTheme" :icon="theme.global.name.value == 'light' ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"></v-btn>
-          </transition>
-      </template>
+  <v-tooltip 
+    location="start" 
+    :text="theme.global.name.value === 'light' ? 'Modo claro' : 'Modo oscuro'"
+  >
+    <template v-slot:activator="{ props }">
+      <v-btn 
+        v-bind="props" 
+        variant="tonal" 
+        class="mx-2" 
+        @click="toggleTheme" 
+        :icon="theme.global.name.value === 'light' ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
+      ></v-btn>
+    </template>
   </v-tooltip>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue'
-  import { ref, reactive, computed, nextTick, onBeforeMount, watch, watchEffect } from 'vue'
-  export default defineComponent({
-      name: 'ButtonToggle',
-  })
-</script>
+
 <script setup lang="ts">
-  import { onMounted } from 'vue';
-  import { useTheme } from 'vuetify' 
-  
-  const theme = useTheme();
-  onMounted(async () => {
-      try {
-          if (localStorage.getItem("lightBlack") != null) {
-              const modeColor = localStorage.lightBlack;
-              theme.global.name.value = modeColor;
-          }
-      } catch (error) {
-          console.error('Error al cargar los datos:', error);
-      }
-  });
-   const user = localStorage.lightBlack;
-  const systemTheme = ref('light');
+import { ref, onMounted, nextTick, watch } from 'vue'
+import { useTheme } from 'vuetify'
 
-  // console.log(theme);
-  function toggleTheme () {
-      localStorage.setItem('lightBlack', theme.global.name.value == 'dark'? 'light': 'dark' );
-      theme.global.name.value = localStorage.lightBlack == 'light' ? 'light' : 'dark'
+const theme = useTheme()
+const STORAGE_KEY = 'lightBlack'
+
+// 1. Inicialización del tema
+onMounted(() => {
+  const savedTheme = localStorage.getItem(STORAGE_KEY)
+  if (savedTheme) {
+    theme.global.name.value = savedTheme
+  } else {
+    // Opcional: Detectar preferencia del sistema
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    theme.global.name.value = prefersDark ? 'dark' : 'light'
   }
- 
-  watchEffect(() => {
-    theme.global.name.value = (
-      user === 'system' ? systemTheme.value : user
-    )
+})
+
+// 2. Función principal para cambiar el tema
+function toggleTheme(event: MouseEvent) {
+  const newTheme = theme.global.name.value === 'light' ? 'dark' : 'light'
+  
+  // Guardar en localStorage
+  localStorage.setItem(STORAGE_KEY, newTheme)
+  
+  // Ejecutar transición visual
+  prepareTransition(event)
+  
+  // Cambiar el valor real del tema
+  theme.global.name.value = newTheme
+}
+
+// 3. Lógica de la transición visual (Ripple effect)
+function prepareTransition(ev: MouseEvent) {
+  const el = document.querySelector('[data-v-app]') as HTMLElement
+  if (!el) return
+
+  // Clonar el estado actual del DOM para la superposición
+  const copy = el.cloneNode(true) as HTMLElement
+  copy.classList.add('app-copy')
+  
+  // Posicionar la copia exactamente sobre el original
+  const rect = el.getBoundingClientRect()
+  Object.assign(copy.style, {
+    top: `${rect.top}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`
   })
 
-  watch(theme.global.current, themeTransition)
+  // Calcular el punto de origen (donde el usuario hizo clic)
+  const x = ev.clientX
+  const y = ev.clientY
+  
+  el.style.setProperty('--clip-pos', `${x}px ${y}px`)
+  el.style.removeProperty('--clip-size')
 
-  function themeTransition () {
-    const x = performance.now()
-    for (let i = 0; i++ < 1e7; i << 9 & 9 % 9 * 9 + 9);
-  //   if (performance.now() - x > 10) return
+  document.body.append(copy)
 
-    const el: HTMLElement = document.querySelector('[data-v-app]')!
-    const children = el.querySelectorAll('*') as NodeListOf<HTMLElement>
+  // Sincronizar scrolls de la copia
+  const scrolledEls = copy.querySelectorAll('[data-scroll-x], [data-scroll-y]')
+  scrolledEls.forEach(elCopy => {
+    const htmlEl = elCopy as HTMLElement
+    htmlEl.scrollLeft = Number(htmlEl.dataset.scrollX)
+    htmlEl.scrollTop = Number(htmlEl.dataset.scrollY)
+  })
 
-    children.forEach(el => {
-      if (hasScrollbar(el)) {
-        el.dataset.scrollX = String(el.scrollLeft)
-        el.dataset.scrollY = String(el.scrollTop)
-      }
-    })
-
-    const copy = el.cloneNode(true) as HTMLElement
-    copy.classList.add('app-copy')
-    const rect = el.getBoundingClientRect()
-    copy.style.top = rect.top + 'px'
-    copy.style.left = rect.left + 'px'
-    copy.style.width = rect.width + 'px'
-    copy.style.height = rect.height + 'px'
-
-    const targetEl = document.activeElement as HTMLElement
-    const targetRect = targetEl.getBoundingClientRect()
-    const left = targetRect.left + targetRect.width / 2 + window.scrollX
-    const top = targetRect.top + targetRect.height / 2 + window.scrollY
-    el.style.setProperty('--clip-pos', `${left}px ${top}px`)
-    el.style.removeProperty('--clip-size')
-
-    nextTick(() => {
-      el.classList.add('app-transition')
+  nextTick(() => {
+    el.classList.add('app-transition')
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.style.setProperty('--clip-size', Math.hypot(window.innerWidth, window.innerHeight) + 'px')
-        })
+        // Expandir el círculo hasta cubrir toda la pantalla
+        el.style.setProperty('--clip-size', `${Math.hypot(window.innerWidth, window.innerHeight)}px`)
       })
     })
+  })
 
-    document.body.append(copy)
-
-    ;(copy.querySelectorAll('[data-scroll-x], [data-scroll-y]') as NodeListOf<HTMLElement>).forEach(el => {
-      el.scrollLeft = +el.dataset.scrollX!
-      el.scrollTop = +el.dataset.scrollY!
-    })
-
-    function onTransitionend (e: TransitionEvent) {
-      if (e.target === e.currentTarget) {
-        copy.remove()
-        el.removeEventListener('transitionend', onTransitionend)
-        el.removeEventListener('transitioncancel', onTransitionend)
-        el.classList.remove('app-transition')
-        el.style.removeProperty('--clip-size')
-        el.style.removeProperty('--clip-pos')
-      }
+  const onTransitionEnd = (e: TransitionEvent) => {
+    if (e.target === el) {
+      copy.remove()
+      el.classList.remove('app-transition')
+      el.style.removeProperty('--clip-size')
+      el.style.removeProperty('--clip-pos')
+      el.removeEventListener('transitionend', onTransitionEnd)
     }
-    el.addEventListener('transitionend', onTransitionend)
-    el.addEventListener('transitioncancel', onTransitionend)
   }
-
-  function hasScrollbar (el?: Element | null) {
-    if (!el || el.nodeType !== Node.ELEMENT_NODE) return false
-
-    const style = window.getComputedStyle(el)
-    return style.overflowY === 'scroll' || (style.overflowY === 'auto' && el.scrollHeight > el.clientHeight)
-  }
+  el.addEventListener('transitionend', onTransitionEnd)
+}
 </script>
 
-<style  lang="sass">
-
-// Theme transition
+<style lang="sass">
+// Estilos para la transición de "recorte"
 .app-copy
   position: fixed !important
-  z-index: -1 !important
+  z-index: 0 !important
   pointer-events: none !important
   contain: size style !important
   overflow: clip !important
 
 .app-transition
-  --clip-size: 0
+  --clip-size: 0px
   --clip-pos: 0 0
+  z-index: 1
   clip-path: circle(var(--clip-size) at var(--clip-pos))
-  transition: clip-path .80s ease-out
+  transition: clip-path 0.8s ease-in-out
 </style>
-
-    
